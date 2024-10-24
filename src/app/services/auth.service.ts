@@ -2,18 +2,24 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
 import IUser from "../models/user.model";
+import {Observable} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private usersCollection: AngularFirestoreCollection<IUser>;
+  isAuthenticated$: Observable<boolean>;
 
   constructor(
     private readonly angularFireAuth: AngularFireAuth,
     private readonly angularFireStore: AngularFirestore,
   ) {
     this.usersCollection = this.angularFireStore.collection('users');
+    this.isAuthenticated$ = this.angularFireAuth.user.pipe(
+      map((user) => Boolean(user)),
+    )
   }
 
   async createUser(userData: IUser) {
