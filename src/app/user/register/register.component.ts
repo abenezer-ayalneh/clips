@@ -3,7 +3,8 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {JsonPipe} from "@angular/common";
 import {InputComponent} from "../../shared/input/input.component";
 import {AlertComponent} from "../../shared/alert/alert.component";
-import {AngularFireAuth} from '@angular/fire/compat/auth';
+import {AuthService} from "../../services/auth.service";
+import IUser from "../../models/user.model";
 
 
 @Component({
@@ -29,7 +30,7 @@ export class RegisterComponent {
 
   nameFormControl = new FormControl('', {validators: [Validators.required, Validators.minLength(2)]})
   emailFormControl = new FormControl('', {validators: [Validators.required, Validators.email]})
-  ageFormControl = new FormControl('', {validators: [Validators.required, Validators.min(3), Validators.max(120)]})
+  ageFormControl = new FormControl<number | null>(null, {validators: [Validators.required, Validators.min(3), Validators.max(120)]})
   passwordFormControl = new FormControl('', {validators: [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm)]})
   confirmPasswordFormControl = new FormControl('', {validators: [Validators.required]})
   phoneNumberFormControl = new FormControl('', {validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)]})
@@ -42,7 +43,9 @@ export class RegisterComponent {
     phoneNumber: this.phoneNumberFormControl,
   })
 
-  constructor(private readonly angularFireAuth: AngularFireAuth) {
+  constructor(
+    private readonly authService: AuthService,
+  ) {
   }
 
   async register() {
@@ -52,9 +55,7 @@ export class RegisterComponent {
     this.isSubmitting = true
 
     try {
-      const {email, password} = this.registerForm.value
-      const userCredential = await this.angularFireAuth.createUserWithEmailAndPassword(email as string, password as string)
-      console.log({userCredential})
+      await this.authService.createUser(this.registerForm.value as IUser)
     } catch (e) {
       console.error(e)
 
