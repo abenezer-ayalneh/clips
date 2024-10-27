@@ -5,6 +5,7 @@ import {InputComponent} from "../../shared/input/input.component";
 import {AlertComponent} from "../../shared/alert/alert.component";
 import {AuthService} from "../../services/auth.service";
 import IUser from "../../models/user.model";
+import {MatchValidator} from "../validators/match-validator";
 
 
 @Component({
@@ -41,7 +42,7 @@ export class RegisterComponent {
     password: this.passwordFormControl,
     confirmPassword: this.confirmPasswordFormControl,
     phoneNumber: this.phoneNumberFormControl,
-  })
+  }, {validators: [MatchValidator.match('password', 'confirmPassword')]})
 
   constructor(
     private readonly authService: AuthService,

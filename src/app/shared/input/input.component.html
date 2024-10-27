@@ -26,4 +26,8 @@
   @if (control.errors?.['pattern']) {
     <p class="text-red-400">Password must be at least 8 characters, must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.</p>
   }
+
+  @if (control.errors?.['noMatch']) {
+    <p class="text-red-400">Passwords do not match.</p>
+  }
 }
