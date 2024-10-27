@@ -6,6 +6,7 @@ import {AlertComponent} from "../../shared/alert/alert.component";
 import {AuthService} from "../../services/auth.service";
 import IUser from "../../models/user.model";
 import {MatchValidator} from "../validators/match-validator";
+import {EmailTaken} from "../validators/email-taken";
 
 
 @Component({
@@ -30,7 +31,7 @@ export class RegisterComponent {
   isSubmitting = false
 
   nameFormControl = new FormControl('', {validators: [Validators.required, Validators.minLength(2)]})
-  emailFormControl = new FormControl('', {validators: [Validators.required, Validators.email]})
+  emailFormControl = new FormControl('', {validators: [Validators.required, Validators.email], asyncValidators: [this.emailTaken.validate]})
   ageFormControl = new FormControl<number | null>(null, {validators: [Validators.required, Validators.min(3), Validators.max(120)]})
   passwordFormControl = new FormControl('', {validators: [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm)]})
   confirmPasswordFormControl = new FormControl('', {validators: [Validators.required]})
@@ -46,6 +47,7 @@ export class RegisterComponent {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly emailTaken: EmailTaken,
   ) {
   }
 
