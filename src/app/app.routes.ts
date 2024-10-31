@@ -8,6 +8,10 @@ export const routes: Routes = [
     component: HomeComponent,
   },
   {
+    path: '',
+    loadChildren: () => import('./video/video.routes').then((routes) => routes.videoRoutes)
+  },
+  {
     path: 'about',
     component: AboutComponent,
   }

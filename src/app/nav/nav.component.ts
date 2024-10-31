@@ -30,9 +30,4 @@ export class NavComponent {
 
     this.modalService.toggleModal('auth')
   }
-
-  async logout($event: Event) {
-    $event.preventDefault()
-    await this.angularFireAuth.signOut()
-  }
 }
