@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
 import IUser from "../models/user.model";
-import {Observable} from "rxjs";
+import {filter, Observable, switchMap} from "rxjs";
 import {delay, map} from "rxjs/operators";
-import {Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,13 @@ export class AuthService {
   isAuthenticated$: Observable<boolean>;
   isAuthenticatedWithDelay$: Observable<boolean>;
   private usersCollection: AngularFirestoreCollection<IUser>;
+  private redirect: boolean = false
 
   constructor(
     private readonly angularFireAuth: AngularFireAuth,
     private readonly angularFireStore: AngularFirestore,
     private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
   ) {
     this.usersCollection = this.angularFireStore.collection('users');
     this.isAuthenticated$ = this.angularFireAuth.user.pipe(
@@ -26,6 +28,27 @@ export class AuthService {
     this.isAuthenticatedWithDelay$ = this.isAuthenticated$.pipe(
       delay(1000)
     )
+
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => {
+          let route = this.activatedRoute;
+
+          while (route.firstChild) {
+            route = route.firstChild;
+          }
+
+          return route;
+        }),
+        filter((route) => route.outlet === 'primary'),
+        switchMap((route) => route.data)
+      ).subscribe({
+      next: (routeData) => {
+        console.log(routeData)
+        this.redirect = routeData['authOnly'] ?? false;
+      }
+    })
   }
 
   async createUser(userData: IUser) {
@@ -55,6 +78,9 @@ export class AuthService {
   async logout($event?: Event) {
     $event?.preventDefault()
     await this.angularFireAuth.signOut()
-    await this.router.navigateByUrl('/')
+
+    if (this.redirect) {
+      await this.router.navigateByUrl('/')
+    }
   }
 }
