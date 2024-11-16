@@ -14,7 +14,7 @@
           </li>
         } @else {
           <li>
-            <a class="px-2" routerLink="/manage" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="text-indigo-400">Manage</a>
+            <a class="px-2" routerLink="/manage" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="text-indigo-400" [queryParams]="{sort: 'asc'}">Manage</a>
           </li>
           <li>
             <a class="px-2" routerLink="/upload" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="text-indigo-400">Upload</a>

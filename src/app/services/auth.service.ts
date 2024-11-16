@@ -45,7 +45,6 @@ export class AuthService {
         switchMap((route) => route.data)
       ).subscribe({
       next: (routeData) => {
-        console.log(routeData)
         this.redirect = routeData['authOnly'] ?? false;
       }
     })
