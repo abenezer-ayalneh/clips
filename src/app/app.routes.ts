@@ -3,6 +3,9 @@ import {HomeComponent} from "./home/home.component";
 import {AboutComponent} from "./about/about.component";
 import {ClipComponent} from "./clip/clip.component";
 import {NotFoundComponent} from "./not-found/not-found.component";
+import {AngularFireAuthGuard, redirectUnauthorizedTo} from "@angular/fire/compat/auth-guard";
+
+const redirectUnauthorizedToHome = () => redirectUnauthorizedTo('/')
 
 export const routes: Routes = [
   {
@@ -11,7 +14,11 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadChildren: () => import('./video/video.routes').then((routes) => routes.videoRoutes)
+    data: {
+      authGuardPipe: redirectUnauthorizedToHome
+    },
+    loadChildren: () => import('./video/video.routes').then((routes) => routes.videoRoutes),
+    canActivate: [AngularFireAuthGuard]
   },
   {
     path: 'about',
